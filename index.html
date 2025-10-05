@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Simran QR Code</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load qrcode.js for QR code generation -->
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Dancing+Script:wght@700&display=swap');
+
+        /* Custom Colors & Fonts */
+        :root {
+            --pink-primary: #ff69b4; /* Hot Pink */
+            --gold-accent: #ffd700; /* Gold */
+            --text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fce9f1 0%, #fff7fb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            overflow-x: hidden;
+        }
+
+        /* Confetti/Star Overlay (Decorative Touches) */
+        .confetti-stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .star {
+            position: absolute;
+            color: var(--gold-accent);
+            font-size: 1.5rem;
+            animation: twinkle 5s infinite ease-in-out;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 3px var(--gold-accent));
+        }
+
+        /* Star positioning styles */
+        .star:nth-child(1) { top: 10%; left: 5%; font-size: 1rem; animation-delay: 0s; }
+        .star:nth-child(2) { top: 80%; left: 15%; font-size: 1.2rem; animation-delay: 1.5s; }
+        .star:nth-child(3) { top: 30%; right: 10%; font-size: 0.8rem; animation-delay: 3s; }
+        .star:nth-child(4) { top: 60%; right: 5%; font-size: 1.5rem; animation-delay: 4.5s; }
+        .star:nth-child(5) { top: 50%; left: 30%; font-size: 1rem; animation-delay: 2s; }
+        .star:nth-child(6) { top: 15%; right: 35%; font-size: 1.3rem; animation-delay: 0.5s; }
+        .star:nth-child(7) { top: 70%; left: 45%; font-size: 0.9rem; animation-delay: 3.5s; }
+
+        @keyframes twinkle {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        /* Custom Styling for the Card */
+        .birthday-card {
+            max-width: 400px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(255, 105, 180, 0.3), 0 10px 10px -5px rgba(255, 105, 180, 0.1);
+            border: 5px solid var(--gold-accent);
+            position: relative;
+            z-index: 10; 
+        }
+
+        .title-text {
+            font-family: 'Dancing Script', cursive;
+            color: var(--pink-primary);
+            text-shadow: var(--text-shadow);
+        }
+
+        /* Styling the QR container for gold border/shadow and RELATIVE positioning */
+        #qr-code-display {
+            padding: 1rem;
+            border-radius: 1rem;
+            background: white;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7); /* Gold glow */
+            position: relative; /* CRITICAL for absolute positioning of logo */
+        }
+        
+        /* Styling the center logo container */
+        #logo-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20; /* Ensure logo is on top of the canvas */
+            width: 75px; /* Fixed size for reliable centering */
+            height: 75px;
+            border-radius: 50%;
+            background: white; /* White background to cover QR dots */
+            padding: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #logo-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%; /* Makes the logo circular */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Decorative Stars/Confetti Layer -->
+    <div class="confetti-stars">
+        <span class="star">🌟</span>
+        <span class="star">✨</span>
+        <span class="star">🌟</span>
+        <span class="star">✨</span>
+        <span class="star">🌟</span>
+        <span class="star">✨</span>
+        <span class="star">🌟</span>
+    </div>
+
+    <!-- Main Content Card -->
+    <div class="birthday-card text-center">
+        <h1 class="title-text text-5xl font-extrabold mb-2">Happy Birthday Simran!</h1>
+
+        <p class="text-gray-600 mb-6 px-4">
+            "Wishing you a day filled with love, laughter, and endless joy! May all your dreams shine as bright as you do. Happy Birthday, Simran!"
+        </p>
+
+        <!-- QR Code Display Area (Relative Parent) -->
+        <div id="qr-code-display" class="mx-auto flex justify-center items-center">
+            <!-- Hidden container for QR code generation -->
+            <div id="qrcode_container" style="display:none;"></div>
+            
+            <!-- Visible QR code canvas -->
+            <canvas id="final_qr_canvas" class="w-full max-w-xs h-auto rounded-xl"></canvas>
+
+            <!-- CRITICAL: Logo Overlay (Using a universally accessible image link) -->
+            <div id="logo-overlay">
+                <!-- 
+                    *** PUBLIC IMAGE URL *** This URL uses a generic placeholder. If you host your original logo 
+                    online, replace the 'src' value below with that public link!
+                -->
+                <img id="logo_image" 
+                     src="https://placehold.co/100x100/ff69b4/ffffff?text=%E2%99%A5" 
+                     alt="Birthday Logo" 
+                     onerror="this.style.display='none'; document.getElementById('logo-overlay').style.display='none';" />
+            </div>
+        </div>
+        
+        <p class="mt-4 text-sm text-gray-500 font-semibold tracking-wider">Scan this code to unlock a special surprise!</p>
+    </div>
+
+    <script>
+        // Configuration
+        const QR_URL = "https://share.google/5ucsBzbPRrKElw1Gk";
+        const QR_DOT_COLOR = '#FF69B4'; // Pink color for the QR dots
+        const QR_SIZE = 300; 
+
+        /**
+         * Main function to generate the QR code with custom colors.
+         */
+        function generateCustomQrCode() {
+            // 1. Generate the basic QR code into a hidden container
+            new QRCode(document.getElementById('qrcode_container'), {
+                text: QR_URL,
+                width: QR_SIZE, 
+                height: QR_SIZE,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                // High error correction is needed to maintain scanability
+                correctLevel : QRCode.CorrectLevel.H 
+            });
+
+            // Wait 500ms for qrcode.js to finish drawing the initial canvas
+            setTimeout(() => {
+                const qrContainer = document.getElementById('qrcode_container');
+                const tempCanvas = qrContainer.querySelector('canvas');
+
+                if (!tempCanvas) {
+                    console.error("QR code canvas not found after generation.");
+                    return;
+                }
+
+                const size = tempCanvas.width;
+                const ctx = tempCanvas.getContext('2d');
+                
+                // 2. Apply Custom Colors (Change Black dots to Pink)
+                const imageData = ctx.getImageData(0, 0, size, size);
+                const data = imageData.data;
+                const hexToRgb = (hex) => [
+                    parseInt(hex.substring(1, 3), 16),
+                    parseInt(hex.substring(3, 5), 16),
+                    parseInt(hex.substring(5, 7), 16)
+                ];
+                const [r, g, b] = hexToRgb(QR_DOT_COLOR);
+
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i] === 0 && data[i+1] === 0 && data[i+2] === 0) {
+                        data[i] = r;     
+                        data[i+1] = g;   
+                        data[i+2] = b;   
+                        data[i+3] = 255; 
+                    }
+                }
+                ctx.putImageData(imageData, 0, 0);
+
+                // 3. Clear the center area for the CSS-layered logo
+                const clearSize = 85; 
+                const centerX = size / 2;
+                const centerY = size / 2;
+
+                ctx.fillStyle = '#ffffff'; // White background
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, clearSize / 2, 0, Math.PI * 2, false);
+                ctx.fill();
+
+                // 4. Transfer the final image to the visible canvas element
+                const finalCanvas = document.getElementById('final_qr_canvas');
+                finalCanvas.width = size;
+                finalCanvas.height = size;
+                const finalCtx = finalCanvas.getContext('2d');
+                finalCtx.drawImage(tempCanvas, 0, 0);
+
+                // Clean up the temporary container
+                qrContainer.remove();
+
+            }, 500); 
+        }
+
+        // Initialize on window load
+        window.onload = generateCustomQrCode;
+
+    </script>
+</body>
+</html>
+
